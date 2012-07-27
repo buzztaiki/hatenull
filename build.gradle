@@ -1,0 +1,21 @@
+apply plugin: 'java'
+apply plugin: 'findbugs'
+
+group = "buzztaiki"
+version = "1.0"
+
+targetCompatibility = "1.6"
+sourceCompatibility = "1.6"
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'com.google.code.findbugs:jsr305:2.0.0'
+    compile files("${System.properties['java.home']}/../lib/tools.jar")
+}
+
+task debug << {
+    configurations.compile.each { println it }
+}
