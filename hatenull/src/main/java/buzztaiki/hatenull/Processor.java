@@ -65,7 +65,6 @@ public class Processor extends AbstractProcessor {
 
     private @Nonnull List<JCTree.JCAnnotation> addNonnull(@Nonnull List<JCTree.JCAnnotation> annotations) {
         for (JCTree.JCAnnotation annot : annotations) {
-            System.out.format("###%s%n", annot.getClass());
         }
         return annotations;
     }

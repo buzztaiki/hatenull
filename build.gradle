@@ -1,21 +1,50 @@
-apply plugin: 'java'
-apply plugin: 'findbugs'
+subprojects {
+    // apply from: 'https://launchpad.net/gradle-templates/trunk/1.2/+download/apply.groovy'
+    group = "buzztaiki"
+    version = "1.0"
 
-group = "buzztaiki"
-version = "1.0"
-
-targetCompatibility = "1.6"
-sourceCompatibility = "1.6"
-
-repositories {
-    mavenCentral()
 }
 
-dependencies {
-    compile 'com.google.code.findbugs:jsr305:2.0.0'
-    compile files("${System.properties['java.home']}/../lib/tools.jar")
+project(':hatenull') {
+    apply plugin: 'java'
+    apply plugin: 'findbugs'
+
+    targetCompatibility = "1.6"
+    sourceCompatibility = "1.6"
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'com.google.code.findbugs:jsr305:2.0.0'
+        compile files("${System.properties['java.home']}/../lib/tools.jar")
+    }
 }
 
-task debug << {
-    configurations.compile.each { println it }
+project(':example') {
+    apply plugin: 'java'
+    apply plugin: 'findbugs'
+
+    targetCompatibility = "1.6"
+    sourceCompatibility = "1.6"
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        compile 'com.google.code.findbugs:jsr305:2.0.0'
+        compile project(':hatenull')
+    }
+
+
+
+    compileJava.options.with {
+        it.compilerArgs = ['-processor', 'buzztaiki.hatenull.Processor']
+    }
+
+    task debug <<{
+        configurations.compile.each { println it }
+    }
 }
