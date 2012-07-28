@@ -5,7 +5,9 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.code.Flags;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
+import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 import java.util.Set;
@@ -26,7 +28,7 @@ import javax.tools.JavaFileObject;
 @SupportedAnnotationTypes("*")
 @SupportedSourceVersion(SourceVersion.RELEASE_6)
 public class Processor extends AbstractProcessor {
-    private @Nullable Trees trees;
+    private @Nullable Context context;
 
     @Override
     public void init(@Nonnull ProcessingEnvironment processingEnv) {
@@ -35,12 +37,12 @@ public class Processor extends AbstractProcessor {
             processingEnv.getMessager().printMessage(Diagnostic.Kind.WARNING, "HateNull requires javac v1.6 or greater.");
             return;
         }
-        trees = Trees.instance(processingEnv);
+        context = ((JavacProcessingEnvironment)processingEnv).getContext();
     }
 
     @Override
     public boolean process (@Nonnull Set<? extends TypeElement> annotations, @Nonnull RoundEnvironment roundEnv) {
-        if (trees == null) return false;
+        if (context == null) return false;
 
         for (Element elem : roundEnv.getRootElements()) {
             JCTree.JCCompilationUnit unit = toUnit(elem);
@@ -65,12 +67,35 @@ public class Processor extends AbstractProcessor {
 
     private @Nonnull List<JCTree.JCAnnotation> addNonnull(@Nonnull List<JCTree.JCAnnotation> annotations) {
         for (JCTree.JCAnnotation annot : annotations) {
+            JCTree type = annot.annotationType;
+            String name;
+            if (type instanceof JCTree.JCIdent) {
+                JCTree.JCIdent ident = (JCTree.JCIdent)type;
+                name = ident.sym.toString();
+            } else {
+                name = type.toString();
+            }
+            if (name.equals("javax.annotation.Nonnull")) return annotations;
+            if (name.equals("javax.annotation.Nullable")) return annotations;
+            if (name.equals("javax.annotation.CheckForNull")) return annotations;
         }
-        return annotations;
+        TreeMaker treeMaker = TreeMaker.instance(context);
+        return annotations.prepend(
+            treeMaker.Annotation(chainDots("javax", "annotation", "Nonnull"), List.<JCTree.JCExpression>nil()));
+    }
+
+    private @Nonnull JCTree.JCExpression chainDots(String ... names) {
+        TreeMaker treeMaker = TreeMaker.instance(context);
+        JavacElements elements = JavacElements.instance(context);
+        JCTree.JCExpression e = treeMaker.Ident(elements.getName(names[0]));
+        for (int i = 1; i < names.length; i++) {
+            e = treeMaker.Select(e, elements.getName(names[i]));
+        }
+        return e;
     }
 
     private @Nullable JCTree.JCCompilationUnit toUnit(@Nonnull Element element) {
-        TreePath path = trees.getPath(element);
+        TreePath path = Trees.instance(processingEnv).getPath(element);
         return (path == null) ? null : (JCTree.JCCompilationUnit)path.getCompilationUnit();
     }
 }

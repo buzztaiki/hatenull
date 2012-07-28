@@ -36,13 +36,10 @@ project(':example') {
     dependencies {
         compile 'com.google.code.findbugs:jsr305:2.0.0'
         compile project(':hatenull')
+        testCompile 'junit:junit:4.+'
     }
 
-
-
-    compileJava.options.with {
-        it.compilerArgs = ['-processor', 'buzztaiki.hatenull.Processor']
-    }
+    compileJava.options.compilerArgs = ['-processor', 'buzztaiki.hatenull.Processor']
 
     task debug <<{
         configurations.compile.each { println it }
