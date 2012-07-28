@@ -5,6 +5,7 @@ import com.sun.source.util.Trees;
 import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
+import com.sun.tools.javac.tree.TreeInfo;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
 import com.sun.tools.javac.util.Context;
@@ -43,7 +44,7 @@ public class Processor extends AbstractProcessor {
         if (context == null) return false;
 
         for (Element elem : roundEnv.getRootElements()) {
-            JCTree.JCCompilationUnit unit = toUnit(elem);
+            final JCTree.JCCompilationUnit unit = toUnit(elem);
             if (unit == null) continue;
             if (unit.sourcefile.getKind() != JavaFileObject.Kind.SOURCE) continue;
 
@@ -53,6 +54,13 @@ public class Processor extends AbstractProcessor {
                     tree.mods.annotations = addNonnull(tree.mods.annotations);
                     for (JCTree.JCVariableDecl var : tree.params) {
                         var.mods.annotations = addNonnull(tree.mods.annotations);
+                    }
+                }
+                @Override public void visitVarDef(JCTree.JCVariableDecl tree) {
+                    super.visitVarDef(tree);
+                    List<JCTree> path = TreeInfo.pathFor(tree, unit);
+                    if (path.size() > 1 && path.get(1).getTag() == JCTree.CLASSDEF) {
+                        tree.mods.annotations = addNonnull(tree.mods.annotations);
                     }
                 }
             });

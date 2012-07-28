@@ -5,7 +5,17 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 public class Example {
+    private final String plain = null;
+    private final @Nonnull String nonnull = null;
+    private final @Nullable String nullable = null;
+    private final @CheckForNull String checkForNull = null;
+
     public static void main(String[] args) throws Exception {
+        String lplain = null;
+        @Nonnull String lnonnull = null;
+        @Nullable String lnullable = null;
+        @CheckForNull String lcheckForNull = null;
+
         System.out.println(plain(null));
         System.out.println(nullable(null));
         System.out.println(nonnull(null));
