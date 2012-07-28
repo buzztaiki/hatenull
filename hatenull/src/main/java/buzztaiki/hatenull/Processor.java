@@ -2,12 +2,11 @@ package buzztaiki.hatenull;
 
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;
-import com.sun.tools.javac.code.Flags;
+import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.processing.JavacProcessingEnvironment;
 import com.sun.tools.javac.tree.JCTree;
 import com.sun.tools.javac.tree.TreeMaker;
 import com.sun.tools.javac.tree.TreeTranslator;
-import com.sun.tools.javac.model.JavacElements;
 import com.sun.tools.javac.util.Context;
 import com.sun.tools.javac.util.List;
 import java.util.Set;
@@ -17,7 +16,6 @@ import javax.annotation.processing.AbstractProcessor;
 import javax.annotation.processing.ProcessingEnvironment;
 import javax.annotation.processing.RoundEnvironment;
 import javax.annotation.processing.SupportedAnnotationTypes;
-import javax.annotation.processing.SupportedOptions;
 import javax.annotation.processing.SupportedSourceVersion;
 import javax.lang.model.SourceVersion;
 import javax.lang.model.element.Element;
@@ -47,10 +45,7 @@ public class Processor extends AbstractProcessor {
         for (Element elem : roundEnv.getRootElements()) {
             JCTree.JCCompilationUnit unit = toUnit(elem);
             if (unit == null) continue;
-
-            if (unit.sourcefile.getKind() != JavaFileObject.Kind.SOURCE) {
-                continue;
-            }
+            if (unit.sourcefile.getKind() != JavaFileObject.Kind.SOURCE) continue;
 
             unit.accept(new TreeTranslator() {
                 @Override public void visitMethodDef(JCTree.JCMethodDecl tree) {
