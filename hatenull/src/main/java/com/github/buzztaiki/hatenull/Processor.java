@@ -1,4 +1,4 @@
-package buzztaiki.hatenull;
+package com.github.buzztaiki.hatenull;
 
 import com.sun.source.util.TreePath;
 import com.sun.source.util.Trees;

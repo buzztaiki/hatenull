@@ -1,8 +1,6 @@
 subprojects {
-    // apply from: 'https://launchpad.net/gradle-templates/trunk/1.2/+download/apply.groovy'
-    group = "buzztaiki"
+    group = "com.github.buzztaiki"
     version = "1.0"
-
 }
 
 project(':hatenull') {
@@ -39,7 +37,7 @@ project(':example') {
         testCompile 'junit:junit:4.+'
     }
 
-    compileJava.options.compilerArgs = ['-processor', 'buzztaiki.hatenull.Processor']
+    compileJava.options.compilerArgs = ['-processor', 'com.github.buzztaiki.hatenull.Processor']
 
     task debug <<{
         configurations.compile.each { println it }

@@ -1,4 +1,4 @@
-package buzztaiki.hatenull.example;
+package com.github.buzztaiki.hatenull.example;
 
 import javax.annotation.CheckForNull;
 import javax.annotation.Nonnull;

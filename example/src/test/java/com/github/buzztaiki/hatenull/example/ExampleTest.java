@@ -1,4 +1,4 @@
-package buzztaiki.hatenull.example;
+package com.github.buzztaiki.hatenull.example;
 
 import static org.junit.Assert.*;
 import static org.hamcrest.CoreMatchers.*;
